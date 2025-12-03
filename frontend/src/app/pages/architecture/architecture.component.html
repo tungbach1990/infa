@@ -1,0 +1,1127 @@
+<div class="architecture-page">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="toolbar-group">
+        <button class="tool-btn" (click)="openDashboardModal()" title="Dashboards">
+          <span class="tool-icon">📊</span>
+        </button>
+        <button class="tool-btn" (click)="openNodeManageModal()" title="Manage Nodes">
+          <span class="tool-icon">🧩</span>
+        </button>
+        <button class="tool-btn" (click)="openNodeTypesModal()" title="Node Types">
+          <span class="tool-icon">🎨</span>
+        </button>
+        <button class="tool-btn" [class.active]="groupSelectionMode" (click)="startGroupCreation()" title="Create Group">
+          <span class="tool-icon">📦</span>
+        </button>
+        <button class="tool-btn" (click)="openGroupManageModal()" title="Manage Groups">
+          <span class="tool-icon">🗂️</span>
+        </button>
+        <div class="toolbar-divider"></div>
+        <button class="tool-btn" (click)="saveDiagram()" title="Save">
+          <span class="tool-icon">💾</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar-center">
+      <div class="zoom-controls">
+        <button class="zoom-btn" (click)="zoomOut()" title="Zoom Out">−</button>
+        <span class="zoom-level">{{ getZoomPercent() }}%</span>
+        <button class="zoom-btn" (click)="zoomIn()" title="Zoom In">+</button>
+        <button class="zoom-btn" (click)="fitToScreen()" title="Fit to Screen">⊡</button>
+        <button class="zoom-btn" (click)="resetZoom()" title="Reset Zoom">↺</button>
+      </div>
+    </div>
+
+    <div class="toolbar-right">
+      <button class="theme-btn" (click)="toggleThemeMenu()">
+        <span>🎨</span> Theme
+      </button>
+    </div>
+  </div>
+
+  <!-- Theme Menu -->
+  <div class="theme-menu" *ngIf="showThemeMenu">
+    <div class="theme-grid">
+      <div
+        *ngFor="let theme of themes"
+        class="theme-card"
+        [class.active]="currentTheme === theme.id"
+        (click)="switchTheme(theme.id)"
+      >
+        <div class="theme-preview" [ngClass]="'preview-' + theme.id"></div>
+        <span class="theme-name">{{ theme.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas Container -->
+  <div
+    class="canvas-viewport"
+    (mousedown)="onCanvasClick($event)"
+    (contextmenu)="onContextMenu($event)"
+    (wheel)="onWheel($event)"
+  >
+    <!-- Zoomable/Pannable Container -->
+    <div
+      class="canvas-transform"
+      [style.transform]="
+        'translate(' + canvasTransform.x + 'px, ' + canvasTransform.y + 'px) scale(' + canvasTransform.scale + ')'
+      "
+    >
+      <!-- Grid Background -->
+      <div class="canvas-grid"></div>
+
+      <!-- SVG for Edges -->
+      <svg class="edges-layer">
+        <defs>
+          <!-- Animated Arrow Markers -->
+          <marker
+            id="arrow-standard"
+            markerWidth="12"
+            markerHeight="12"
+            refX="10"
+            refY="6"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <path d="M0,0 L0,12 L10,6 z" fill="var(--edge-color, #94a3b8)" />
+          </marker>
+          <marker
+            id="arrow-standard-selected"
+            markerWidth="12"
+            markerHeight="12"
+            refX="10"
+            refY="6"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <path d="M0,0 L0,12 L10,6 z" fill="var(--accent-color, #3b82f6)" />
+          </marker>
+          <marker
+            id="arrow-diamond"
+            markerWidth="14"
+            markerHeight="14"
+            refX="12"
+            refY="7"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <path d="M0,7 L7,0 L14,7 L7,14 z" fill="var(--edge-color, #94a3b8)" />
+          </marker>
+          <marker
+            id="arrow-diamond-selected"
+            markerWidth="14"
+            markerHeight="14"
+            refX="12"
+            refY="7"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <path d="M0,7 L7,0 L14,7 L7,14 z" fill="var(--accent-color, #3b82f6)" />
+          </marker>
+          <marker
+            id="arrow-circle"
+            markerWidth="10"
+            markerHeight="10"
+            refX="5"
+            refY="5"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <circle cx="5" cy="5" r="4" fill="var(--edge-color, #94a3b8)" />
+          </marker>
+          <marker
+            id="arrow-circle-selected"
+            markerWidth="10"
+            markerHeight="10"
+            refX="5"
+            refY="5"
+            orient="auto"
+            markerUnits="userSpaceOnUse"
+          >
+            <circle cx="5" cy="5" r="4" fill="var(--accent-color, #3b82f6)" />
+          </marker>
+        </defs>
+
+        <!-- Edge Connections -->
+        <g *ngFor="let edge of connectedEdges; trackBy: trackByEdgeId">
+          <!-- Hit Area -->
+          <path
+            [attr.d]="edge?.path"
+            class="edge-hit-area"
+            (mousedown)="selectEdge(edge, $event)"
+          />
+          <!-- Visible Edge -->
+          <path
+            [attr.d]="edge?.path"
+            class="edge-path"
+            [class.selected]="selectedEdges.includes(edge) || selectedEdge?.id === edge.id"
+            [attr.marker-end]="
+              'url(#arrow-' +
+              (edge.arrowType || 'standard') +
+              (selectedEdges.includes(edge) || selectedEdge?.id === edge.id ? '-selected' : '') +
+              ')'
+            "
+          />
+          <!-- Edge Label -->
+          <g
+            *ngIf="edge.label && edge.midPoint"
+            class="edge-label-group"
+            [attr.transform]="'translate(' + edge.midPoint.x + ',' + edge.midPoint.y + ')'"
+          >
+            <rect class="edge-label-bg" x="-24" y="-10" width="48" height="20" rx="4" />
+            <text class="edge-label-text" x="0" y="4" text-anchor="middle">{{ edge.label }}</text>
+          </g>
+        </g>
+
+        <!-- Temporary Connection Line -->
+        <g *ngIf="isConnecting && connectionStartNode">
+          <path
+            [attr.d]="
+              getBezierPath(
+                getAnchorPosition(connectionStartNode, connectionStartAnchor || 'bottom'),
+                tempConnectionEnd,
+                connectionStartAnchor || 'bottom',
+                'top'
+              )
+            "
+            class="temp-connection"
+          />
+        </g>
+      </svg>
+
+      <!-- Groups Layer -->
+      <div
+        *ngFor="let group of groups"
+        class="node-group"
+        [class.selected]="selectedGroup?.id === group.id"
+        [class.dragging]="draggingGroup?.id === group.id"
+        [style.left.px]="group.x"
+        [style.top.px]="group.y"
+        [style.width.px]="group.width"
+        [style.height.px]="group.height"
+        [style.--group-color]="group.color"
+        (click)="selectGroup(group); $event.stopPropagation()"
+        (dblclick)="editGroup(group)"
+      >
+        <div class="group-header" (mousedown)="startDragGroup(group, $event)">
+          <span class="group-type-icon">
+            <img *ngIf="isGroupIconUrl(group)" [src]="getGroupDisplayIcon(group)" class="group-header-icon" />
+            <span *ngIf="!isGroupIconUrl(group)">{{ getGroupDisplayIcon(group) }}</span>
+          </span>
+          <span class="group-name">{{ group.name }}</span>
+          <span class="group-total-nodes" *ngIf="getTotalNodes(group) > 0">{{ getTotalNodes(group) }} nodes</span>
+          <button class="group-action-btn" (click)="openAddNodeToGroupModal(group); $event.stopPropagation()" title="Manage Nodes">📋</button>
+          <button class="group-action-btn" (click)="editGroup(group); $event.stopPropagation()" title="Edit">✏️</button>
+          <button class="group-action-btn danger" (click)="deleteGroup(group); $event.stopPropagation()" title="Delete">🗑️</button>
+        </div>
+
+        <!-- Node Roles Display -->
+        <div class="group-roles" *ngIf="group.nodeRoles && group.nodeRoles.length > 0">
+          <div class="role-badge" *ngFor="let role of group.nodeRoles">
+            <span class="role-name">{{ role.name }}</span>
+            <span class="role-count">×{{ role.count }}</span>
+            <span class="role-specs-mini">
+              {{ role.cpu }} | {{ role.ram }}
+              <span *ngIf="role.gpu"> | 🎮 {{ role.gpu }}</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Legacy specs display (if no roles defined) -->
+        <div class="group-specs" *ngIf="!group.nodeRoles || group.nodeRoles.length === 0">
+          <span class="spec-item" *ngIf="group.specs.cpu" title="CPU">💻 {{ group.specs.cpu }}</span>
+          <span class="spec-item" *ngIf="group.specs.ram" title="RAM">🧠 {{ group.specs.ram }}</span>
+          <span class="spec-item" *ngIf="group.specs.disk" title="Disk">💾 {{ group.specs.disk }}</span>
+        </div>
+
+        <!-- Group Connection Anchors -->
+        <div
+          class="group-anchor group-anchor-top"
+          (mousedown)="startConnection({ id: 'group-' + group.id, x: group.x + group.width/2, y: group.y, label: group.name, type: 'group' }, 'top', $event)"
+          (mouseup)="finishConnection({ id: 'group-' + group.id, x: group.x + group.width/2, y: group.y, label: group.name, type: 'group' }, 'top', $event)"
+        ></div>
+        <div
+          class="group-anchor group-anchor-right"
+          (mousedown)="startConnection({ id: 'group-' + group.id, x: group.x + group.width, y: group.y + group.height/2, label: group.name, type: 'group' }, 'right', $event)"
+          (mouseup)="finishConnection({ id: 'group-' + group.id, x: group.x + group.width, y: group.y + group.height/2, label: group.name, type: 'group' }, 'right', $event)"
+        ></div>
+        <div
+          class="group-anchor group-anchor-bottom"
+          (mousedown)="startConnection({ id: 'group-' + group.id, x: group.x + group.width/2, y: group.y + group.height, label: group.name, type: 'group' }, 'bottom', $event)"
+          (mouseup)="finishConnection({ id: 'group-' + group.id, x: group.x + group.width/2, y: group.y + group.height, label: group.name, type: 'group' }, 'bottom', $event)"
+        ></div>
+        <div
+          class="group-anchor group-anchor-left"
+          (mousedown)="startConnection({ id: 'group-' + group.id, x: group.x, y: group.y + group.height/2, label: group.name, type: 'group' }, 'left', $event)"
+          (mouseup)="finishConnection({ id: 'group-' + group.id, x: group.x, y: group.y + group.height/2, label: group.name, type: 'group' }, 'left', $event)"
+        ></div>
+
+        <!-- Group Resize Handles -->
+        <div class="group-resize-handle resize-n" (mousedown)="startResizeGroup(group, 'n', $event)"></div>
+        <div class="group-resize-handle resize-e" (mousedown)="startResizeGroup(group, 'e', $event)"></div>
+        <div class="group-resize-handle resize-s" (mousedown)="startResizeGroup(group, 's', $event)"></div>
+        <div class="group-resize-handle resize-w" (mousedown)="startResizeGroup(group, 'w', $event)"></div>
+        <div class="group-resize-handle resize-nw" (mousedown)="startResizeGroup(group, 'nw', $event)"></div>
+        <div class="group-resize-handle resize-ne" (mousedown)="startResizeGroup(group, 'ne', $event)"></div>
+        <div class="group-resize-handle resize-se" (mousedown)="startResizeGroup(group, 'se', $event)"></div>
+        <div class="group-resize-handle resize-sw" (mousedown)="startResizeGroup(group, 'sw', $event)"></div>
+      </div>
+
+      <!-- Nodes Layer -->
+      <div
+        *ngFor="let node of nodes; trackBy: trackByNodeId"
+        class="workflow-node"
+        [class.selected]="selectedNodes.includes(node)"
+        [class.group-select-mode]="groupSelectionMode"
+        [class.selected-for-group]="isNodeSelectedForGroup(node.id)"
+        [style.left.px]="node.x"
+        [style.top.px]="node.y"
+        [style.--node-color]="getNodeColor(node.type)"
+        (mousedown)="groupSelectionMode ? toggleNodeForGroup(node.id) : selectNode(node, $event)"
+      >
+        <div class="node-color-bar"></div>
+        <div class="node-content">
+          <div class="node-icon">
+          <img
+            *ngIf="isImageIcon(getNodeIcon(node.type), getNodeIconType(node.type))"
+            [src]="getNodeIcon(node.type)"
+            alt=""
+          />
+          <span *ngIf="!isImageIcon(getNodeIcon(node.type), getNodeIconType(node.type))">{{
+            getNodeIcon(node.type)
+          }}</span>
+        </div>
+          <div class="node-info">
+            <span class="node-label">{{ node.label }}</span>
+            <span class="node-type">{{ node.type }}</span>
+          </div>
+        </div>
+        <div class="node-status-indicator"></div>
+
+        <!-- Connection Anchors -->
+        <div
+          class="anchor anchor-top"
+          (mousedown)="startConnection(node, 'top', $event)"
+          (mouseup)="finishConnection(node, 'top', $event)"
+        ></div>
+        <div
+          class="anchor anchor-right"
+          (mousedown)="startConnection(node, 'right', $event)"
+          (mouseup)="finishConnection(node, 'right', $event)"
+        ></div>
+        <div
+          class="anchor anchor-bottom"
+          (mousedown)="startConnection(node, 'bottom', $event)"
+          (mouseup)="finishConnection(node, 'bottom', $event)"
+        ></div>
+        <div
+          class="anchor anchor-left"
+          (mousedown)="startConnection(node, 'left', $event)"
+          (mouseup)="finishConnection(node, 'left', $event)"
+        ></div>
+      </div>
+
+      <!-- Selection Box -->
+      <div
+        class="selection-box"
+        *ngIf="isSelectingArea && selectionBox.w > 0"
+        [style.left.px]="selectionBox.x"
+        [style.top.px]="selectionBox.y"
+        [style.width.px]="selectionBox.w"
+        [style.height.px]="selectionBox.h"
+      ></div>
+    </div>
+  </div>
+
+  <!-- Group Selection Floating Bar -->
+  <div class="group-selection-bar" *ngIf="groupSelectionMode">
+    <span class="selection-info">{{ selectedNodesForGroup.length }} node(s) selected</span>
+    <button class="btn btn-sm btn-primary" [disabled]="selectedNodesForGroup.length < 1" (click)="confirmGroupSelection()">
+      Create Group
+    </button>
+    <button class="btn btn-sm btn-secondary" (click)="cancelGroupCreation()">Cancel</button>
+  </div>
+
+  <!-- Context Menu -->
+  <div
+    class="context-menu"
+    *ngIf="contextMenuVisible"
+    [style.left.px]="contextMenuPosition.x"
+    [style.top.px]="contextMenuPosition.y"
+  >
+    <div class="menu-header">Add Node</div>
+    <div *ngFor="let type of nodeTypes" class="menu-item" (click)="addNodeFromMenu(type.value)">
+      <span class="menu-icon">
+        <img *ngIf="isIconUrl(type.icon, type.iconType)" [src]="type.icon" class="menu-icon-img" />
+        <span *ngIf="!isIconUrl(type.icon, type.iconType)">{{ type.icon }}</span>
+      </span>
+      <span>{{ type.label }}</span>
+    </div>
+  </div>
+
+  <!-- Node Details Panel -->
+  <div class="details-panel" *ngIf="selectedNode && !selectedEdge">
+    <div class="panel-header">
+      <h3>Edit Node</h3>
+      <button class="panel-close" (click)="selectedNode = null; selectedNodes = []">×</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="selectedNode.label" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <div class="custom-select-wrapper">
+          <div class="custom-select" (click)="toggleTypeDropdown()">
+            <span class="selected-type">
+              <img *ngIf="isIconUrl(getNodeTypeByValue(selectedNode.type)?.icon || '', getNodeTypeByValue(selectedNode.type)?.iconType)" [src]="getNodeTypeByValue(selectedNode.type)?.icon" class="select-icon-img" />
+              <span *ngIf="!isIconUrl(getNodeTypeByValue(selectedNode.type)?.icon || '', getNodeTypeByValue(selectedNode.type)?.iconType)">{{ getNodeTypeByValue(selectedNode.type)?.icon }}</span>
+              {{ getNodeTypeByValue(selectedNode.type)?.label }}
+            </span>
+            <span class="dropdown-arrow">▼</span>
+          </div>
+          <div class="custom-dropdown" *ngIf="typeDropdownOpen">
+            <div *ngFor="let type of nodeTypes" class="dropdown-item" (click)="selectNodeType(type.value)">
+              <img *ngIf="isIconUrl(type.icon, type.iconType)" [src]="type.icon" class="select-icon-img" />
+              <span *ngIf="!isIconUrl(type.icon, type.iconType)">{{ type.icon }}</span>
+              {{ type.label }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Group</label>
+        <div class="node-group-selector">
+          <div class="current-group" *ngIf="selectedNode.groupId">
+            <span class="group-badge-small" [style.--group-color]="getGroupById(selectedNode.groupId)?.color">
+              {{ getGroupById(selectedNode.groupId)?.name }}
+            </span>
+            <button class="btn-remove-group" (click)="removeNodeFromCurrentGroup(selectedNode)" title="Remove from group">×</button>
+          </div>
+          <div class="no-group" *ngIf="!selectedNode.groupId">
+            <span class="no-group-text">Not in any group</span>
+          </div>
+          <select
+            class="form-control group-select"
+            [ngModel]="selectedNode.groupId || ''"
+            (ngModelChange)="changeNodeGroup(selectedNode, $event)"
+          >
+            <option value="">-- No Group --</option>
+            <option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel-actions">
+        <button class="btn btn-danger" (click)="deleteSelectedNodes()">Delete Node</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edge Details Panel -->
+  <div class="details-panel" *ngIf="selectedEdge">
+    <div class="panel-header">
+      <h3>Edit Connection</h3>
+      <button class="panel-close" (click)="selectedEdge = null; selectedEdges = []">×</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label>Label</label>
+        <input type="text" [(ngModel)]="selectedEdge.label" class="form-control" placeholder="e.g. HTTPS" />
+      </div>
+      <div class="form-group">
+        <label>Arrow Type</label>
+        <select [(ngModel)]="selectedEdge.arrowType" class="form-control">
+          <option value="standard">Arrow</option>
+          <option value="diamond">Diamond</option>
+          <option value="circle">Circle</option>
+        </select>
+      </div>
+      <div class="panel-actions">
+        <button class="btn btn-danger" (click)="deleteEdge()">Delete Connection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Node Types Modal -->
+  <div class="modal-overlay" *ngIf="showNodeTypesModal" (click)="closeNodeTypesModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Manage Icons & Node Types</h3>
+        <button class="modal-close" (click)="closeNodeTypesModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <!-- Existing Types List -->
+        <div class="type-list">
+          <div
+            class="type-item"
+            *ngFor="let type of nodeTypes; let i = index"
+            [class.editing]="editingNodeTypeIndex === i"
+          >
+            <!-- View Mode -->
+            <ng-container *ngIf="editingNodeTypeIndex !== i">
+              <div class="type-icon-wrapper" [style.background]="type.color">
+                <img *ngIf="isImageIcon(type.icon, type.iconType)" [src]="type.icon" class="type-icon-img" alt="" />
+                <span *ngIf="!isImageIcon(type.icon, type.iconType)" class="type-icon-emoji">{{ type.icon }}</span>
+              </div>
+              <div class="type-info">
+                <span class="type-label">{{ type.label }}</span>
+                <span class="type-value">{{ type.value }}</span>
+              </div>
+              <div class="type-actions">
+                <button class="action-btn" (click)="startEditNodeType(i)" title="Edit">✏️</button>
+                <button class="action-btn danger" (click)="deleteNodeType(i)" title="Delete">🗑️</button>
+              </div>
+            </ng-container>
+
+            <!-- Edit Mode -->
+            <ng-container *ngIf="editingNodeTypeIndex === i && editingNodeType">
+              <div class="type-edit-form">
+                <div class="edit-row">
+                  <div class="form-group">
+                    <label>Label</label>
+                    <input type="text" [(ngModel)]="editingNodeType!.label" class="form-control" />
+                  </div>
+                  <div class="form-group">
+                    <label>Value (ID)</label>
+                    <input type="text" [(ngModel)]="editingNodeType!.value" class="form-control" />
+                  </div>
+                  <div class="form-group color-group">
+                    <label>Color</label>
+                    <input type="color" [(ngModel)]="editingNodeType!.color" class="color-input" />
+                  </div>
+                </div>
+                <div class="icon-picker-section">
+                  <label>Select Icon</label>
+                  <div class="selected-icon-preview">
+                    <span class="preview-icon" [style.background]="editingNodeType!.color">
+                      <img *ngIf="isImageIcon(editingNodeType!.icon, editingNodeType!.iconType)" [src]="editingNodeType!.icon" alt="" />
+                      <span *ngIf="!isImageIcon(editingNodeType!.icon, editingNodeType!.iconType)">{{ editingNodeType!.icon }}</span>
+                    </span>
+                  </div>
+                  <!-- Icon Picker Tabs -->
+                  <div class="icon-picker-tabs">
+                    <button [class.active]="iconPickerMode === 'infra'" (click)="iconPickerMode = 'infra'">Infra</button>
+                    <button [class.active]="iconPickerMode === 'emoji'" (click)="iconPickerMode = 'emoji'">Emoji</button>
+                    <button [class.active]="iconPickerMode === 'url'" (click)="iconPickerMode = 'url'">URL</button>
+                    <button [class.active]="iconPickerMode === 'upload'" (click)="iconPickerMode = 'upload'">Upload</button>
+                  </div>
+                  <!-- Infra Icons -->
+                  <div class="icon-categories" *ngIf="iconPickerMode === 'infra'">
+                    <div class="infra-category" *ngFor="let cat of infraIconCategories">
+                      <span class="category-name">{{ cat.name }}</span>
+                      <div class="infra-icon-grid">
+                        <button
+                          *ngFor="let icon of cat.icons"
+                          class="infra-icon-btn"
+                          [class.selected]="editingNodeType!.icon === icon.url"
+                          (click)="selectInfraIconForEdit(icon.url)"
+                          [title]="icon.name"
+                        >
+                          <img [src]="icon.url" [alt]="icon.name" />
+                          <span>{{ icon.name }}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Emoji Icons -->
+                  <div class="icon-categories" *ngIf="iconPickerMode === 'emoji'">
+                    <div class="icon-category" *ngFor="let cat of emojiCategories">
+                      <span class="category-name">{{ cat.name }}</span>
+                      <div class="icon-grid">
+                        <button
+                          *ngFor="let icon of cat.icons"
+                          class="icon-btn"
+                          [class.selected]="editingNodeType!.icon === icon"
+                          (click)="selectIconForEditType(icon, 'emoji')"
+                        >
+                          {{ icon }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- URL Input -->
+                  <div class="url-input-section" *ngIf="iconPickerMode === 'url'">
+                    <input type="text" [(ngModel)]="customIconUrl" placeholder="Enter image URL..." class="form-control" />
+                    <button class="btn btn-sm btn-primary" (click)="applyCustomUrlForEdit()">Apply</button>
+                  </div>
+                  <!-- File Upload -->
+                  <div class="upload-section" *ngIf="iconPickerMode === 'upload'">
+                    <label class="upload-btn">
+                      <input type="file" accept="image/*" (change)="onFileSelected($event, 'edit')" hidden />
+                      <span>📁 Choose Image File</span>
+                    </label>
+                    <p class="upload-hint">Supports PNG, JPG, SVG (max 500KB)</p>
+                  </div>
+                </div>
+                <div class="edit-actions">
+                  <button class="btn btn-sm btn-secondary" (click)="cancelEditNodeType()">Cancel</button>
+                  <button class="btn btn-sm btn-primary" (click)="saveEditNodeType()">Save</button>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Add New Type Form -->
+        <div class="add-form">
+          <h4>Add New Type</h4>
+          <div class="edit-row">
+            <div class="form-group">
+              <label>Label</label>
+              <input type="text" placeholder="e.g. Docker" [(ngModel)]="newNodeType.label" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Value (ID)</label>
+              <input type="text" placeholder="e.g. docker" [(ngModel)]="newNodeType.value" class="form-control" />
+            </div>
+            <div class="form-group color-group">
+              <label>Color</label>
+              <input type="color" [(ngModel)]="newNodeType.color" class="color-input" />
+            </div>
+          </div>
+          <div class="icon-picker-section">
+            <label>Select Icon</label>
+            <div class="selected-icon-preview">
+              <span class="preview-icon" [style.background]="newNodeType.color">
+                <img *ngIf="isImageIcon(newNodeType.icon, newNodeType.iconType)" [src]="newNodeType.icon" alt="" />
+                <span *ngIf="!isImageIcon(newNodeType.icon, newNodeType.iconType)">{{ newNodeType.icon || '?' }}</span>
+              </span>
+            </div>
+            <!-- Icon Picker Tabs -->
+            <div class="icon-picker-tabs">
+              <button [class.active]="iconPickerMode === 'infra'" (click)="iconPickerMode = 'infra'">Infra</button>
+              <button [class.active]="iconPickerMode === 'emoji'" (click)="iconPickerMode = 'emoji'">Emoji</button>
+              <button [class.active]="iconPickerMode === 'url'" (click)="iconPickerMode = 'url'">URL</button>
+              <button [class.active]="iconPickerMode === 'upload'" (click)="iconPickerMode = 'upload'">Upload</button>
+            </div>
+            <!-- Infra Icons -->
+            <div class="icon-categories" *ngIf="iconPickerMode === 'infra'">
+              <div class="infra-category" *ngFor="let cat of infraIconCategories">
+                <span class="category-name">{{ cat.name }}</span>
+                <div class="infra-icon-grid">
+                  <button
+                    *ngFor="let icon of cat.icons"
+                    class="infra-icon-btn"
+                    [class.selected]="newNodeType.icon === icon.url"
+                    (click)="selectInfraIconForNew(icon.url)"
+                    [title]="icon.name"
+                  >
+                    <img [src]="icon.url" [alt]="icon.name" />
+                    <span>{{ icon.name }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Emoji Icons -->
+            <div class="icon-categories" *ngIf="iconPickerMode === 'emoji'">
+              <div class="icon-category" *ngFor="let cat of emojiCategories">
+                <span class="category-name">{{ cat.name }}</span>
+                <div class="icon-grid">
+                  <button
+                    *ngFor="let icon of cat.icons"
+                    class="icon-btn"
+                    [class.selected]="newNodeType.icon === icon"
+                    (click)="selectIconForNewType(icon, 'emoji')"
+                  >
+                    {{ icon }}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- URL Input -->
+            <div class="url-input-section" *ngIf="iconPickerMode === 'url'">
+              <input type="text" [(ngModel)]="customIconUrl" placeholder="Enter image URL..." class="form-control" />
+              <button class="btn btn-sm btn-primary" (click)="applyCustomUrlForNew()">Apply</button>
+            </div>
+            <!-- File Upload -->
+            <div class="upload-section" *ngIf="iconPickerMode === 'upload'">
+              <label class="upload-btn">
+                <input type="file" accept="image/*" (change)="onFileSelected($event, 'new')" hidden />
+                <span>📁 Choose Image File</span>
+              </label>
+              <p class="upload-hint">Supports PNG, JPG, SVG (max 500KB)</p>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary"
+            (click)="addNodeType()"
+            [disabled]="!newNodeType.label || !newNodeType.value || !newNodeType.icon"
+          >
+            Add Type
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Modal -->
+  <div class="modal-overlay" *ngIf="showGroupModal" (click)="cancelGroupCreation()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ selectedGroup ? 'Edit' : 'Create' }} Group</h3>
+        <button class="modal-close" (click)="cancelGroupCreation()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Group Name</label>
+          <input type="text" [(ngModel)]="newGroup.name" class="form-control" placeholder="e.g., Production VM 1" />
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <div class="group-type-selector">
+            <div
+              *ngFor="let type of groupTypes"
+              class="group-type-option"
+              [class.selected]="newGroup.type === type.value"
+              (click)="newGroup.type = type.value"
+            >
+              <span class="type-icon">{{ type.icon }}</span>
+              <span class="type-label">{{ type.label }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Icon</label>
+          <div class="group-icon-selector">
+            <div class="selected-icon-preview" (click)="toggleGroupIconPicker()">
+              <img *ngIf="newGroup.icon && isIconUrl(newGroup.icon, newGroup.iconType)" [src]="newGroup.icon" class="icon-preview-img" />
+              <span *ngIf="!newGroup.icon" class="icon-placeholder">{{ getGroupTypeIcon(newGroup.type) }}</span>
+              <span class="change-icon-text">{{ newGroup.icon ? 'Change' : 'Select Icon' }}</span>
+            </div>
+            <button *ngIf="newGroup.icon" class="btn btn-sm btn-secondary" (click)="clearGroupIcon()">Clear</button>
+          </div>
+
+          <!-- Icon Picker Dropdown -->
+          <div class="group-icon-picker" *ngIf="showGroupIconPicker">
+            <!-- Node Types Icons -->
+            <div class="icon-category" *ngIf="nodeTypes.length > 0">
+              <div class="category-name">Node Types</div>
+              <div class="category-icons">
+                <div
+                  class="icon-option"
+                  *ngFor="let type of nodeTypes"
+                  [class.selected]="newGroup.icon === type.icon"
+                  (click)="selectGroupIcon(type.icon)"
+                  [title]="type.label"
+                >
+                  <img *ngIf="isImageIcon(type.icon, type.iconType)" [src]="type.icon" [alt]="type.label" />
+                  <span *ngIf="!isImageIcon(type.icon, type.iconType)" class="emoji-icon">{{ type.icon }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Predefined Categories -->
+            <div class="icon-category" *ngFor="let category of groupIconCategories">
+              <div class="category-name">{{ category.name }}</div>
+              <div class="category-icons">
+                <div
+                  class="icon-option"
+                  *ngFor="let item of category.icons"
+                  [class.selected]="newGroup.icon === item.icon"
+                  (click)="selectGroupIcon(item.icon)"
+                  [title]="item.label"
+                >
+                  <img [src]="item.icon" [alt]="item.label" />
+                </div>
+              </div>
+            </div>
+            
+            <!-- URL Input -->
+            <div class="icon-url-input">
+              <label>Or paste image URL:</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="https://example.com/icon.svg"
+                [(ngModel)]="newGroup.icon"
+                (ngModelChange)="newGroup.iconType = 'url'"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Color</label>
+          <div class="color-picker">
+            <div
+              *ngFor="let color of ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16']"
+              class="color-option"
+              [class.selected]="newGroup.color === color"
+              [style.background]="color"
+              (click)="newGroup.color = color"
+            ></div>
+          </div>
+        </div>
+        <!-- Node Roles Section -->
+        <div class="form-group">
+          <div class="node-roles-header">
+            <label>Node Roles</label>
+            <button class="btn btn-sm btn-secondary" (click)="addNodeRole()">+ Add Role</button>
+          </div>
+
+          <div class="node-roles-list" *ngIf="newGroup.nodeRoles && newGroup.nodeRoles.length > 0">
+            <div class="node-role-item" *ngFor="let role of newGroup.nodeRoles; let i = index">
+              <div class="role-header">
+                <input
+                  type="text"
+                  [(ngModel)]="role.name"
+                  class="form-control role-name-input"
+                  placeholder="Role name (e.g., Master, Worker)"
+                  list="rolePresets"
+                />
+                <datalist id="rolePresets">
+                  <option *ngFor="let preset of commonRolePresets" [value]="preset"></option>
+                </datalist>
+                <button class="btn-icon danger" (click)="removeNodeRole(i)" title="Remove">🗑️</button>
+              </div>
+              <div class="role-specs">
+                <div class="spec-input">
+                  <label>Count</label>
+                  <input type="number" [(ngModel)]="role.count" class="form-control" min="1" />
+                </div>
+                <div class="spec-input">
+                  <label>CPU</label>
+                  <input type="text" [(ngModel)]="role.cpu" class="form-control" placeholder="4 vCPU" />
+                </div>
+                <div class="spec-input">
+                  <label>RAM</label>
+                  <input type="text" [(ngModel)]="role.ram" class="form-control" placeholder="16 GB" />
+                </div>
+                <div class="spec-input">
+                  <label>Disk</label>
+                  <input type="text" [(ngModel)]="role.disk" class="form-control" placeholder="100 GB" />
+                </div>
+                <div class="spec-input">
+                  <label>GPU</label>
+                  <input type="text" [(ngModel)]="role.gpu" class="form-control" placeholder="1x A100" />
+                </div>
+                <div class="spec-input">
+                  <label>vRAM</label>
+                  <input type="text" [(ngModel)]="role.vram" class="form-control" placeholder="80 GB" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-roles" *ngIf="!newGroup.nodeRoles || newGroup.nodeRoles.length === 0">
+            <span>No node roles defined. Click "Add Role" to add Master, Worker, etc.</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelGroupCreation()">Cancel</button>
+        <button class="btn btn-primary" [disabled]="!newGroup.name" (click)="saveGroup()">
+          {{ selectedGroup ? 'Update' : 'Create' }} Group
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Remove Nodes from Group Modal -->
+  <div class="modal-overlay" *ngIf="showAddNodeToGroupModal && addingToGroup" (click)="closeAddNodeToGroupModal()">
+    <div class="modal-content modal-medium" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Manage Nodes in {{ addingToGroup.name }}</h3>
+        <button class="modal-close" (click)="closeAddNodeToGroupModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <!-- Nodes in Group -->
+        <div class="group-nodes-section">
+          <h4>Nodes in Group ({{ getNodesInGroup(addingToGroup.id).length }})</h4>
+          <div class="group-nodes-list">
+            <div *ngIf="getNodesInGroup(addingToGroup.id).length === 0" class="empty-message">
+              No nodes in this group
+            </div>
+            <div *ngFor="let node of getNodesInGroup(addingToGroup.id)" class="group-node-item">
+              <span class="node-icon-small">
+                <img *ngIf="isIconUrl(getNodeIcon(node.type), getNodeIconType(node.type))" [src]="getNodeIcon(node.type)" class="node-icon-img" />
+                <span *ngIf="!isIconUrl(getNodeIcon(node.type), getNodeIconType(node.type))">{{ getNodeIcon(node.type) }}</span>
+              </span>
+              <span class="node-label">{{ node.label }}</span>
+              <button class="btn btn-sm btn-danger" (click)="removeNodeFromGroup(node)">Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available Nodes -->
+        <div class="group-nodes-section">
+          <h4>Available Nodes ({{ getNodesNotInAnyGroup().length }})</h4>
+          <div class="group-nodes-list">
+            <div *ngIf="getNodesNotInAnyGroup().length === 0" class="empty-message">
+              All nodes are in groups
+            </div>
+            <div *ngFor="let node of getNodesNotInAnyGroup()" class="group-node-item">
+              <span class="node-icon-small">
+                <img *ngIf="isIconUrl(getNodeIcon(node.type), getNodeIconType(node.type))" [src]="getNodeIcon(node.type)" class="node-icon-img" />
+                <span *ngIf="!isIconUrl(getNodeIcon(node.type), getNodeIconType(node.type))">{{ getNodeIcon(node.type) }}</span>
+              </span>
+              <span class="node-label">{{ node.label }}</span>
+              <button class="btn btn-sm btn-primary" (click)="addNodeToGroup(node, addingToGroup)">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeAddNodeToGroupModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Management Modal -->
+  <div class="modal-overlay" *ngIf="showGroupManageModal" (click)="closeGroupManageModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Manage Groups</h3>
+        <div class="modal-header-actions">
+          <span class="node-count">{{ groups.length }} groups</span>
+          <button class="modal-close" (click)="closeGroupManageModal()">×</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <!-- Search -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search groups..."
+            [(ngModel)]="groupSearchQuery"
+            class="form-control search-input"
+          />
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="groups.length === 0" class="empty-state">
+          <span class="empty-icon">🗂️</span>
+          <p>No groups created yet</p>
+          <button class="btn btn-primary" (click)="closeGroupManageModal(); startGroupCreation()">Create First Group</button>
+        </div>
+
+        <!-- Group List -->
+        <div class="group-manage-list" *ngIf="groups.length > 0">
+          <div class="group-manage-item" *ngFor="let group of filteredGroups">
+            <!-- Group Info -->
+            <div class="group-preview" [style.--group-color]="group.color">
+              <span class="group-preview-icon">
+                <img *ngIf="isGroupIconUrl(group)" [src]="getGroupDisplayIcon(group)" class="group-preview-img" />
+                <span *ngIf="!isGroupIconUrl(group)">{{ getGroupDisplayIcon(group) }}</span>
+              </span>
+            </div>
+            <div class="group-manage-info">
+              <span class="group-manage-name">{{ group.name }}</span>
+              <span class="group-manage-type">{{ getGroupTypeLabel(group.type) }}</span>
+            </div>
+
+            <!-- Nodes in Group -->
+            <div class="group-nodes-info">
+              <span class="nodes-count">{{ getNodeCountInGroup(group.id) }} nodes mapped</span>
+              <div class="nodes-preview" *ngIf="getNodesInGroup(group.id).length > 0">
+                <span class="node-chip" *ngFor="let node of getNodesInGroup(group.id).slice(0, 3)">
+                  {{ node.label }}
+                </span>
+                <span class="more-nodes" *ngIf="getNodesInGroup(group.id).length > 3">
+                  +{{ getNodesInGroup(group.id).length - 3 }} more
+                </span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="group-manage-actions">
+              <button class="action-btn" (click)="focusGroup(group)" title="Focus">👁️</button>
+              <button class="action-btn" (click)="openAddNodeToGroupModal(group)" title="Manage Nodes">📋</button>
+              <button class="action-btn" (click)="duplicateGroup(group)" title="Duplicate">📄</button>
+              <button class="action-btn" (click)="editGroup(group); closeGroupManageModal()" title="Edit">✏️</button>
+              <button class="action-btn danger" (click)="deleteGroupFromModal(group)" title="Delete">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Node Management Modal -->
+  <div class="modal-overlay" *ngIf="showNodeManageModal" (click)="closeNodeManageModal()">
+    <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Manage Nodes</h3>
+        <div class="modal-header-actions">
+          <span class="node-count">{{ nodes.length }} nodes</span>
+          <button class="modal-close" (click)="closeNodeManageModal()">×</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <!-- Search -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search nodes..."
+            [(ngModel)]="nodeSearchQuery"
+            class="form-control search-input"
+          />
+        </div>
+
+        <!-- Node List -->
+        <div class="node-manage-list">
+          <div
+            class="node-manage-item"
+            *ngFor="let node of filteredNodes"
+            [class.editing]="editingNode?.id === node.id"
+          >
+            <!-- View Mode -->
+            <ng-container *ngIf="editingNode?.id !== node.id">
+              <div class="node-preview" [style.--node-color]="getNodeColor(node.type)">
+                <span class="node-preview-icon">
+                  <img *ngIf="isIconUrl(getNodeIcon(node.type), getNodeIconType(node.type))" [src]="getNodeIcon(node.type)" class="node-preview-img" />
+                  <span *ngIf="!isIconUrl(getNodeIcon(node.type), getNodeIconType(node.type))">{{ getNodeIcon(node.type) }}</span>
+                </span>
+              </div>
+              <div class="node-manage-info">
+                <span class="node-manage-label">{{ node.label }}</span>
+                <span class="node-manage-type">{{ node.type }}</span>
+              </div>
+              <div class="node-manage-actions">
+                <button class="action-btn" (click)="focusNode(node)" title="Focus">👁️</button>
+                <button class="action-btn" (click)="duplicateNode(node)" title="Duplicate">📋</button>
+                <button class="action-btn" (click)="startEditNode(node)" title="Edit">✏️</button>
+                <button class="action-btn danger" (click)="deleteNodeFromModal(node)" title="Delete">🗑️</button>
+              </div>
+            </ng-container>
+
+            <!-- Edit Mode -->
+            <ng-container *ngIf="editingNode?.id === node.id && editingNode">
+              <div class="node-edit-form">
+                <div class="edit-row">
+                  <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" [(ngModel)]="editingNode!.label" class="form-control" />
+                  </div>
+                  <div class="form-group">
+                    <label>Type (Icon)</label>
+                    <div class="custom-select-wrapper">
+                      <div class="custom-select" (click)="toggleEditTypeDropdown()">
+                        <span class="selected-type">
+                          <img *ngIf="isIconUrl(getNodeTypeByValue(editingNode!.type)?.icon || '', getNodeTypeByValue(editingNode!.type)?.iconType)" [src]="getNodeTypeByValue(editingNode!.type)?.icon" class="select-icon-img" />
+                          <span *ngIf="!isIconUrl(getNodeTypeByValue(editingNode!.type)?.icon || '', getNodeTypeByValue(editingNode!.type)?.iconType)">{{ getNodeTypeByValue(editingNode!.type)?.icon }}</span>
+                          {{ getNodeTypeByValue(editingNode!.type)?.label }}
+                        </span>
+                        <span class="dropdown-arrow">▼</span>
+                      </div>
+                      <div class="custom-dropdown" *ngIf="editTypeDropdownOpen">
+                        <div *ngFor="let type of nodeTypes" class="dropdown-item" (click)="selectEditNodeType(type.value)">
+                          <img *ngIf="isIconUrl(type.icon, type.iconType)" [src]="type.icon" class="select-icon-img" />
+                          <span *ngIf="!isIconUrl(type.icon, type.iconType)">{{ type.icon }}</span>
+                          {{ type.label }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="edit-actions">
+                  <button class="btn btn-sm btn-secondary" (click)="cancelEditNode()">Cancel</button>
+                  <button class="btn btn-sm btn-primary" (click)="saveEditNode()">Save</button>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="filteredNodes.length === 0">
+            <span class="empty-icon">🔍</span>
+            <span class="empty-text" *ngIf="nodeSearchQuery">No nodes match "{{ nodeSearchQuery }}"</span>
+            <span class="empty-text" *ngIf="!nodeSearchQuery">No nodes yet. Right-click on canvas to add.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file input for import -->
+  <input
+    type="file"
+    #importFileInput
+    accept=".json"
+    (change)="onImportFile($event)"
+    style="display: none"
+  />
+
+  <!-- Dashboard Modal -->
+  <div class="modal-overlay" *ngIf="showDashboardModal" (click)="closeDashboardModal()">
+    <div class="modal-content modal-medium" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Dashboards</h3>
+        <button class="modal-close" (click)="closeDashboardModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <!-- Import/Export Actions -->
+        <div class="dashboard-actions">
+          <button class="btn btn-secondary" (click)="triggerImport()" [disabled]="isLoading">
+            <span>📥</span> Import
+          </button>
+          <button class="btn btn-secondary" (click)="exportDashboard()" [disabled]="isLoading || !currentDashboardId">
+            <span>📤</span> Export Current
+          </button>
+        </div>
+
+        <!-- Dashboard List -->
+        <div class="type-list">
+          <div *ngIf="isLoading" class="loading-state">
+            <span>Loading...</span>
+          </div>
+          <div *ngIf="!isLoading && dashboards.length === 0" class="empty-state">
+            <span class="empty-icon">📊</span>
+            <span>No dashboards yet</span>
+          </div>
+          <div
+            class="type-item"
+            *ngFor="let dash of dashboards"
+            [class.active]="dash.id === currentDashboardId"
+            (click)="loadDashboard(dash.id)"
+          >
+            <div class="type-info">
+              <span class="type-label">{{ dash.name }}</span>
+              <span class="type-value">{{ dash.updatedAt || dash.createdAt | date : 'short' }}</span>
+            </div>
+            <span *ngIf="dash.id === currentDashboardId" class="active-badge">Active</span>
+            <button
+              class="type-delete"
+              *ngIf="dash.id !== currentDashboardId"
+              (click)="deleteDashboard(dash); $event.stopPropagation()"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        <!-- Create New Dashboard -->
+        <div class="add-form">
+          <h4>Create New Dashboard</h4>
+          <div class="form-row">
+            <input
+              type="text"
+              placeholder="Dashboard Name"
+              [(ngModel)]="newDashboardName"
+              class="form-control full-width"
+            />
+          </div>
+          <button
+            class="btn btn-primary"
+            (click)="createNewDashboard(newDashboardName)"
+            [disabled]="!newDashboardName || isLoading"
+          >
+            {{ isLoading ? 'Creating...' : 'Create' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <span>Loading...</span>
+  </div>
+</div>

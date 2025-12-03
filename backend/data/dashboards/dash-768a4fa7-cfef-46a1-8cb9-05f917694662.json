@@ -1,0 +1,375 @@
+{
+  "id": "dash-768a4fa7-cfef-46a1-8cb9-05f917694662",
+  "name": "iot-1000-camera (imported)",
+  "data": {
+    "domains": [],
+    "edges": [
+      {
+        "arrowType": "standard",
+        "from": "node-cameras-1000",
+        "fromAnchor": "bottom",
+        "id": "edge-cam-to-lb-ingest",
+        "label": "",
+        "to": "node-lb-ingest",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-lb-ingest",
+        "fromAnchor": "bottom",
+        "id": "edge-lb-ingest-to-mediamtx",
+        "label": "RTSP / WebRTC",
+        "to": "node-mediamtx-ingest",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-mediamtx-ingest",
+        "fromAnchor": "right",
+        "id": "edge-mediamtx-to-kafka",
+        "label": "event / metadata",
+        "to": "node-kafka-stream",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-ai-analytics",
+        "fromAnchor": "right",
+        "id": "edge-ai-to-kafka",
+        "label": "alert / analytics",
+        "to": "node-kafka-stream",
+        "toAnchor": "bottom"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-kafka-stream",
+        "fromAnchor": "top",
+        "id": "edge-kafka-to-timeseries",
+        "label": "metrics / telemetry",
+        "to": "node-timeseries-db",
+        "toAnchor": "right"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-lb-public",
+        "fromAnchor": "bottom",
+        "id": "edge-public-lb-to-kong",
+        "label": "HTTPS",
+        "to": "node-kong-gateway",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-iot-api",
+        "fromAnchor": "bottom",
+        "id": "edge-iot-api-to-auth",
+        "label": "auth",
+        "to": "node-auth-service",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-iot-api",
+        "fromAnchor": "right",
+        "id": "edge-iot-api-to-mqtt",
+        "label": "command / config",
+        "to": "node-mqtt-broker",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-mqtt-broker",
+        "fromAnchor": "bottom",
+        "id": "edge-mqtt-to-telemetry",
+        "label": "status / telemetry",
+        "to": "node-telemetry-service",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-telemetry-service",
+        "fromAnchor": "right",
+        "id": "edge-telemetry-to-kafka",
+        "label": "event",
+        "to": "node-kafka-stream",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-iot-api",
+        "fromAnchor": "bottom",
+        "id": "edge-iot-api-to-device-registry",
+        "label": "device info",
+        "to": "node-device-registry",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-iot-api",
+        "fromAnchor": "bottom",
+        "id": "edge-iot-api-to-redis",
+        "label": "cache",
+        "to": "node-redis-cache",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-user-portal",
+        "fromAnchor": "right",
+        "id": "edge-user-portal-to-iot-api",
+        "label": "UI calls",
+        "to": "node-iot-api",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-kong-gateway",
+        "fromAnchor": "bottom",
+        "id": "edge-1764686928262",
+        "label": "",
+        "to": "node-iot-api",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-mediamtx-ingest",
+        "fromAnchor": "left",
+        "id": "edge-1764686958435",
+        "label": "",
+        "to": "node-object-storage",
+        "toAnchor": "top"
+      }
+    ],
+    "groups": [],
+    "nodeTypes": [
+      {
+        "color": "#10b981",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg",
+        "iconType": "url",
+        "label": "Load Balancer",
+        "value": "lb"
+      },
+      {
+        "color": "#f5f2fd",
+        "icon": "https://seeklogo.com/images/K/kong-logo-6A0306FC92-seeklogo.com.png",
+        "iconType": "url",
+        "label": "API Gateway",
+        "value": "gateway"
+      },
+      {
+        "color": "#3b82f6",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+        "iconType": "url",
+        "label": "Service",
+        "value": "service"
+      },
+      {
+        "color": "#336791",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
+        "iconType": "url",
+        "label": "PostgreSQL",
+        "value": "db"
+      },
+      {
+        "color": "#dc382d",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
+        "iconType": "url",
+        "label": "Redis",
+        "value": "cache"
+      },
+      {
+        "color": "#ff9900",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+        "iconType": "url",
+        "label": "AWS S3",
+        "value": "storage"
+      },
+      {
+        "color": "#231f20",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apachekafka/apachekafka-original.svg",
+        "iconType": "url",
+        "label": "Kafka",
+        "value": "queue"
+      },
+      {
+        "color": "#e9ecf1",
+        "icon": "https://seeklogo.com/images/M/mqtt-logo-DA92498054-seeklogo.com.png",
+        "iconType": "url",
+        "label": "MQTT",
+        "value": "MQTT"
+      }
+    ],
+    "nodes": [
+      {
+        "dragOffsetX": 59.007936507936904,
+        "dragOffsetY": 49.00793650793659,
+        "id": "node-cameras-1000",
+        "label": "Camera FHD x1000",
+        "type": "service",
+        "x": 100,
+        "y": -240
+      },
+      {
+        "dragOffsetX": 77.34126984127025,
+        "dragOffsetY": 52.34126984126992,
+        "id": "node-lb-ingest",
+        "label": "LB Ingest",
+        "type": "lb",
+        "x": 100,
+        "y": -100
+      },
+      {
+        "dragOffsetX": 82.34126984127022,
+        "dragOffsetY": 55.67460317460328,
+        "id": "node-lb-public",
+        "label": "LB Public",
+        "type": "lb",
+        "x": 420,
+        "y": -240
+      },
+      {
+        "dragOffsetX": 70.67460317460353,
+        "dragOffsetY": 47.341269841269934,
+        "groupId": "group-kong",
+        "id": "node-kong-gateway",
+        "label": "Kong API Gateway",
+        "type": "gateway",
+        "x": 420,
+        "y": -100
+      },
+      {
+        "dragOffsetX": 87.34126984127016,
+        "dragOffsetY": 55.67460317460325,
+        "groupId": "group-k8s-core",
+        "id": "node-iot-api",
+        "label": "IoT API",
+        "type": "service",
+        "x": 420,
+        "y": 160
+      },
+      {
+        "dragOffsetX": 102.34126984127022,
+        "dragOffsetY": 47.34126984126982,
+        "groupId": "group-k8s-core",
+        "id": "node-auth-service",
+        "label": "Auth Service",
+        "type": "service",
+        "x": 20,
+        "y": 680
+      },
+      {
+        "dragOffsetX": 90.67460317460348,
+        "dragOffsetY": 52.34126984126976,
+        "groupId": "group-db",
+        "id": "node-device-registry",
+        "label": "Device Registry",
+        "type": "db",
+        "x": 600,
+        "y": 680
+      },
+      {
+        "dragOffsetX": 107.3412698412701,
+        "dragOffsetY": 42.341269841269906,
+        "groupId": "group-k8s-core",
+        "id": "node-mqtt-broker",
+        "label": "MQTT Broker",
+        "type": "MQTT",
+        "x": 700,
+        "y": 340
+      },
+      {
+        "dragOffsetX": 87.3412698412701,
+        "dragOffsetY": 39.007936507936506,
+        "groupId": "group-k8s-core",
+        "id": "node-telemetry-service",
+        "label": "Telemetry Service",
+        "type": "service",
+        "x": 1120,
+        "y": 500
+      },
+      {
+        "dragOffsetX": 87.34126984127022,
+        "dragOffsetY": 50.674603174603135,
+        "groupId": "group-k8s-core",
+        "id": "node-redis-cache",
+        "label": "Redis Cache",
+        "type": "cache",
+        "x": 320,
+        "y": 700
+      },
+      {
+        "dragOffsetX": 117.34126984127028,
+        "dragOffsetY": 52.34126984126976,
+        "groupId": "group-k8s-core",
+        "id": "node-user-portal",
+        "label": "User Portal / Dashboard",
+        "type": "service",
+        "x": -320,
+        "y": 520
+      },
+      {
+        "dragOffsetX": 44.007936507936904,
+        "dragOffsetY": 24.007936507936577,
+        "groupId": "group-gpu",
+        "id": "node-mediamtx-ingest",
+        "label": "MediaMTX Ingest",
+        "type": "service",
+        "x": 100,
+        "y": 80
+      },
+      {
+        "dragOffsetX": 74.00793650793685,
+        "dragOffsetY": 59.00793650793639,
+        "groupId": "group-gpu",
+        "id": "node-ai-analytics",
+        "label": "AI Analytics",
+        "type": "service",
+        "x": 860,
+        "y": 680
+      },
+      {
+        "dragOffsetX": 62.341269841270105,
+        "dragOffsetY": 54.007936507936606,
+        "groupId": "group-kafka",
+        "id": "node-kafka-stream",
+        "label": "Kafka Stream",
+        "type": "queue",
+        "x": 780,
+        "y": 20
+      },
+      {
+        "dragOffsetX": 102.34126984127032,
+        "dragOffsetY": 55.67460317460328,
+        "groupId": "group-storage",
+        "id": "node-object-storage",
+        "label": "Object Storage (Recording)",
+        "type": "storage",
+        "x": -380,
+        "y": 200
+      },
+      {
+        "dragOffsetX": 82.3412698412701,
+        "dragOffsetY": 55.67460317460326,
+        "groupId": "group-db",
+        "id": "node-timeseries-db",
+        "label": "Timeseries DB",
+        "type": "db",
+        "x": 1180,
+        "y": -80
+      },
+      {
+        "dragOffsetX": 82.3412698412701,
+        "dragOffsetY": 59.00793650793639,
+        "groupId": "group-monitoring",
+        "id": "node-monitoring",
+        "label": "Monitoring / Logging",
+        "type": "service",
+        "x": 1180,
+        "y": 680
+      }
+    ],
+    "vms": []
+  },
+  "createdAt": "2025-12-02T14:39:08.070Z",
+  "updatedAt": "2025-12-02T14:49:18.447Z"
+}

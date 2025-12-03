@@ -1,0 +1,73 @@
+<div class="jobs-page">
+    <div class="page-header">
+        <h2>Jobs Management</h2>
+        <button class="btn btn-primary" (click)="openCreateModal()">
+            <i class="icon-plus"></i> Create Job
+        </button>
+    </div>
+
+    <div class="jobs-table-container">
+        <table class="jobs-table">
+            <thead>
+                <tr>
+                    <th>Job ID</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Started At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let job of jobs; let i = index">
+                    <td>{{ job.id }}</td>
+                    <td>{{ job.type }}</td>
+                    <td>
+                        <span class="status-badge" [ngClass]="getStatusClass(job.status)">
+                            {{ job.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" [style.width.%]="job.progress"
+                                [class.completed]="job.progress === 100" [class.failed]="job.status === 'Failed'">
+                            </div>
+                            <span class="progress-text">{{ job.progress }}%</span>
+                        </div>
+                    </td>
+                    <td>{{ job.startedAt | date:'medium' }}</td>
+                    <td>
+                        <button class="btn-icon delete" (click)="deleteJob(i)" title="Delete Job">
+                            &times;
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Create Job Modal -->
+    <div class="modal-overlay" *ngIf="showCreateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Job</h3>
+                <button class="close-btn" (click)="closeCreateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Job Type</label>
+                    <select [(ngModel)]="newJobType" class="form-control">
+                        <option value="Import">Import Data</option>
+                        <option value="Export">Export Data</option>
+                        <option value="Backup">System Backup</option>
+                        <option value="Restore">System Restore</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" (click)="closeCreateModal()">Cancel</button>
+                    <button class="btn btn-primary" (click)="createJob()">Start Job</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

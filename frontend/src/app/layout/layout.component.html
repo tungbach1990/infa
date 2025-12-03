@@ -1,0 +1,43 @@
+<div class="layout-container">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"></div>
+      <h1>Infa Admin</h1>
+    </div>
+    <nav>
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <i class="icon-dashboard"></i> Dashboard
+      </a>
+      <a routerLink="/architecture" routerLinkActive="active" class="nav-item">
+        <i class="icon-architecture"></i> Architecture
+      </a>
+      <a routerLink="/jobs" routerLinkActive="active" class="nav-item">
+        <i class="icon-jobs"></i> Jobs
+      </a>
+      <a routerLink="/settings" routerLinkActive="active" class="nav-item">
+        <i class="icon-settings"></i> Settings
+      </a>
+    </nav>
+    <div class="user-profile">
+      <div class="avatar">AD</div>
+      <div class="info">
+        <span class="name">Admin User</span>
+        <span class="role">Administrator</span>
+      </div>
+    </div>
+  </aside>
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="breadcrumbs">
+        <span>Home</span> / <span class="current">Architecture</span>
+      </div>
+      <div class="system-status">
+        <span class="status-item"><span class="dot green"></span> Redis: Connected</span>
+        <span class="status-item"><span class="dot green"></span> DB: Connected</span>
+      </div>
+    </header>
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

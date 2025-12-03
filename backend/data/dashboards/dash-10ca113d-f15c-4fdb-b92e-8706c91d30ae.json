@@ -1,0 +1,384 @@
+{
+  "id": "dash-10ca113d-f15c-4fdb-b92e-8706c91d30ae",
+  "name": "iot",
+  "data": {
+    "domains": [],
+    "edges": [
+      {
+        "arrowType": "standard",
+        "from": "node-1764668837880",
+        "fromAnchor": "bottom",
+        "id": "edge-1764675130739",
+        "label": "",
+        "to": "node-1764674462746",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764668837880",
+        "fromAnchor": "bottom",
+        "id": "edge-1764675429955",
+        "label": "",
+        "to": "group-group-1764675378683-jt4bcgu6j",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "group-group-1764675378683-jt4bcgu6j",
+        "fromAnchor": "bottom",
+        "id": "edge-1764675452404",
+        "label": "",
+        "to": "group-group-1764673579110",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764668837880",
+        "fromAnchor": "bottom",
+        "id": "edge-1764675485388",
+        "label": "",
+        "to": "group-group-1764674871385-q02lf0zxq",
+        "toAnchor": "top"
+      }
+    ],
+    "groups": [
+      {
+        "color": "#3b82f6",
+        "height": 480,
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg",
+        "iconType": "url",
+        "id": "group-1764673579110",
+        "name": "k8s",
+        "nodeIds": [
+          "node-1764673571673"
+        ],
+        "nodeRoles": [
+          {
+            "count": 3,
+            "cpu": "8 vCPU",
+            "disk": "200 GB",
+            "gpu": "",
+            "id": "role-1764673591410",
+            "name": "",
+            "ram": "16 GB",
+            "vram": ""
+          },
+          {
+            "count": 3,
+            "cpu": "16 vCPU",
+            "disk": "500 GB",
+            "gpu": "",
+            "id": "role-1764673593715",
+            "name": "",
+            "ram": "32 GB",
+            "vram": ""
+          }
+        ],
+        "specs": {
+          "cpu": "4 vCPU",
+          "disk": "100 GB",
+          "ram": "16 GB"
+        },
+        "type": "cluster",
+        "width": 300,
+        "x": -160,
+        "y": 120
+      },
+      {
+        "color": "#3b82f6",
+        "height": 160,
+        "icon": "https://www.svgrepo.com/show/353950/kafka.svg",
+        "iconType": "url",
+        "id": "group-1764674476337-wtdzno22f",
+        "name": "Kafka",
+        "nodeIds": [
+          "node-1764674470970"
+        ],
+        "nodeRoles": [
+          {
+            "count": 3,
+            "cpu": "4 vCPU",
+            "disk": "100 GB",
+            "gpu": "",
+            "id": "role-1764675501227-gpxocm219",
+            "name": "Master",
+            "ram": "8 GB",
+            "vram": ""
+          },
+          {
+            "count": 3,
+            "cpu": "8 vCPU",
+            "disk": "500 GB",
+            "gpu": "",
+            "id": "role-1764675893805-iwaxx040h",
+            "name": "Worker",
+            "ram": "16 GB",
+            "vram": ""
+          }
+        ],
+        "specs": {
+          "cpu": "4 vCPU",
+          "disk": "100 GB",
+          "ram": "16 GB"
+        },
+        "type": "cluster",
+        "width": 180,
+        "x": 1360,
+        "y": 560
+      },
+      {
+        "color": "#3b82f6",
+        "height": 520,
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg",
+        "iconType": "url",
+        "id": "group-1764674871385-q02lf0zxq",
+        "name": "GPU",
+        "nodeIds": [],
+        "nodeRoles": [
+          {
+            "count": 3,
+            "cpu": "16 vCPU",
+            "disk": "200 GB",
+            "gpu": "",
+            "id": "role-1764674876197-k8c5ezgp6",
+            "name": "Master",
+            "ram": "32 GB",
+            "vram": ""
+          },
+          {
+            "count": 3,
+            "cpu": "64 vCPU",
+            "disk": "1000 GB",
+            "gpu": "A30",
+            "id": "role-1764674878124-npbk8y5o7",
+            "name": "Worker",
+            "ram": "128 GB",
+            "vram": "24"
+          }
+        ],
+        "specs": {
+          "cpu": "",
+          "disk": "",
+          "ram": ""
+        },
+        "type": "cluster",
+        "width": 500,
+        "x": 460,
+        "y": 0
+      },
+      {
+        "color": "#3b82f6",
+        "height": 200,
+        "icon": "https://cdn.cookielaw.org/logos/42b8010a-a819-451e-8bd4-35f56794de29/2c4de954-6bec-4e93-8086-64cb113f151a/69e1ef61-0885-4db9-ac57-70d056bc66b3/konglogo.png",
+        "iconType": "url",
+        "id": "group-1764675378683-jt4bcgu6j",
+        "name": "KONG",
+        "nodeIds": [],
+        "nodeRoles": [
+          {
+            "count": 3,
+            "cpu": "8 vCPU",
+            "disk": "200 GB",
+            "gpu": "",
+            "id": "role-1764675355539-kiunvbd0n",
+            "name": "",
+            "ram": "16 GB",
+            "vram": ""
+          }
+        ],
+        "specs": {
+          "cpu": "",
+          "disk": "",
+          "ram": ""
+        },
+        "type": "cluster",
+        "width": 300,
+        "x": -240,
+        "y": -160
+      },
+      {
+        "color": "#3b82f6",
+        "height": 200,
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg",
+        "iconType": "url",
+        "id": "group-1764685893017-7apedvim8",
+        "name": "MongoDB",
+        "nodeIds": [],
+        "nodeRoles": [
+          {
+            "count": 3,
+            "cpu": "16 vCPU",
+            "disk": "500 GB",
+            "gpu": "",
+            "id": "role-1764685877035-m2s7i50gz",
+            "name": "",
+            "ram": "32 GB",
+            "vram": ""
+          }
+        ],
+        "specs": {
+          "cpu": "",
+          "disk": "",
+          "ram": ""
+        },
+        "type": "cluster",
+        "width": 300,
+        "x": 320,
+        "y": 640
+      }
+    ],
+    "nodeTypes": [
+      {
+        "color": "#10b981",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg",
+        "iconType": "url",
+        "label": "Load Balancer",
+        "value": "lb"
+      },
+      {
+        "color": "#f5f2fd",
+        "icon": "https://cdn.cookielaw.org/logos/42b8010a-a819-451e-8bd4-35f56794de29/2c4de954-6bec-4e93-8086-64cb113f151a/69e1ef61-0885-4db9-ac57-70d056bc66b3/konglogo.png",
+        "iconType": "url",
+        "label": "API Gateway",
+        "value": "gateway"
+      },
+      {
+        "color": "#3b82f6",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg",
+        "iconType": "url",
+        "label": "Service",
+        "value": "service"
+      },
+      {
+        "color": "#336791",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg",
+        "iconType": "url",
+        "label": "PostgreSQL",
+        "value": "db"
+      },
+      {
+        "color": "#dc382d",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg",
+        "iconType": "url",
+        "label": "Redis",
+        "value": "cache"
+      },
+      {
+        "color": "#ff9900",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+        "iconType": "url",
+        "label": "AWS S3",
+        "value": "storage"
+      },
+      {
+        "color": "#231f20",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apachekafka/apachekafka-original.svg",
+        "iconType": "url",
+        "label": "Kafka",
+        "value": "queue"
+      },
+      {
+        "color": "#2496ed",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg",
+        "iconType": "url",
+        "label": "Docker",
+        "value": "docker"
+      },
+      {
+        "color": "#326ce5",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg",
+        "iconType": "url",
+        "label": "Kubernetes",
+        "value": "k8s"
+      },
+      {
+        "color": "#47a248",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg",
+        "iconType": "url",
+        "label": "MongoDB",
+        "value": "mongodb"
+      },
+      {
+        "color": "#4479a1",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg",
+        "iconType": "url",
+        "label": "MySQL",
+        "value": "mysql"
+      },
+      {
+        "color": "#005571",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/elasticsearch/elasticsearch-original.svg",
+        "iconType": "url",
+        "label": "Elasticsearch",
+        "value": "elasticsearch"
+      },
+      {
+        "color": "#e9ecf1",
+        "icon": "https://images.seeklogo.com/logo-png/39/1/mqtt-logo-png_seeklogo-399397.png",
+        "iconType": "url",
+        "label": "MQTT",
+        "value": "MQTT"
+      },
+      {
+        "color": "#f4f5f5",
+        "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opentelemetry/opentelemetry-original.svg",
+        "iconType": "url",
+        "label": "Telemetry",
+        "value": "Telemetry"
+      }
+    ],
+    "nodes": [
+      {
+        "dragOffsetX": 102.3412698412701,
+        "dragOffsetY": 14.007936507936584,
+        "id": "node-1764668837880",
+        "label": "LB Cứng",
+        "type": "lb",
+        "x": 540,
+        "y": -220
+      },
+      {
+        "dragOffsetX": 84.00793650793662,
+        "dragOffsetY": 24.007936507936563,
+        "id": "node-1764674462746",
+        "label": "MQTT",
+        "type": "MQTT",
+        "x": 1160,
+        "y": -120
+      },
+      {
+        "dragOffsetX": 86,
+        "dragOffsetY": 49,
+        "groupId": "group-1764674871385-q02lf0zxq",
+        "id": "node-1764675051689",
+        "label": "MediaMTX",
+        "type": "service",
+        "x": 500,
+        "y": 180
+      },
+      {
+        "dragOffsetX": 72.34126984127026,
+        "dragOffsetY": 54.00793650793656,
+        "groupId": "group-1764673579110",
+        "id": "node-1764675157447",
+        "label": "Load Balancer",
+        "type": "lb",
+        "x": -100,
+        "y": 220
+      },
+      {
+        "dragOffsetX": 60.67460317460347,
+        "dragOffsetY": 70.67460317460313,
+        "groupId": "group-1764674871385-q02lf0zxq",
+        "id": "node-1764685724187",
+        "label": "Telemetry",
+        "type": "Telemetry",
+        "x": 700,
+        "y": 180
+      }
+    ],
+    "vms": []
+  },
+  "createdAt": "2025-12-02T09:46:50.888Z",
+  "updatedAt": "2025-12-02T14:31:40.988Z"
+}
