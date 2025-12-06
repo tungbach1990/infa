@@ -372,7 +372,7 @@
     <div class="panel-body">
       <div class="form-group">
         <label>Name</label>
-        <input type="text" [(ngModel)]="selectedNode.label" class="form-control" />
+        <input type="text" [(ngModel)]="selectedNode.label" (ngModelChange)="onNodeChange()" class="form-control" />
       </div>
       <div class="form-group">
         <label>Type</label>
@@ -386,7 +386,7 @@
             <span class="dropdown-arrow">▼</span>
           </div>
           <div class="custom-dropdown" *ngIf="typeDropdownOpen">
-            <div *ngFor="let type of nodeTypes" class="dropdown-item" (click)="selectNodeType(type.value)">
+            <div *ngFor="let type of nodeTypes" class="dropdown-item" (click)="selectNodeType(type.value); onNodeChange()">
               <img *ngIf="isIconUrl(type.icon, type.iconType)" [src]="type.icon" class="select-icon-img" />
               <span *ngIf="!isIconUrl(type.icon, type.iconType)">{{ type.icon }}</span>
               {{ type.label }}
@@ -431,11 +431,11 @@
     <div class="panel-body">
       <div class="form-group">
         <label>Label</label>
-        <input type="text" [(ngModel)]="selectedEdge.label" class="form-control" placeholder="e.g. HTTPS" />
+        <input type="text" [(ngModel)]="selectedEdge.label" (ngModelChange)="onEdgeChange()" class="form-control" placeholder="e.g. HTTPS" />
       </div>
       <div class="form-group">
         <label>Arrow Type</label>
-        <select [(ngModel)]="selectedEdge.arrowType" class="form-control">
+        <select [(ngModel)]="selectedEdge.arrowType" (ngModelChange)="onEdgeChange()" class="form-control">
           <option value="standard">Arrow</option>
           <option value="diamond">Diamond</option>
           <option value="circle">Circle</option>

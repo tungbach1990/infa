@@ -437,6 +437,17 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
+  pointer-events: none; // Allow click-through to edges
+
+  // Enable pointer events for interactive elements
+  .group-header,
+  .group-anchor,
+  .group-resize-handle,
+  .group-action-btn,
+  .group-roles,
+  .group-specs {
+    pointer-events: auto;
+  }
 
   &:hover {
     background: color-mix(in srgb, var(--group-color, #3b82f6) 12%, transparent);

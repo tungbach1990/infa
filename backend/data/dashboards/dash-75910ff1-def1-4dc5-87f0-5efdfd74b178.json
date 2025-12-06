@@ -24,110 +24,11 @@
       },
       {
         "arrowType": "standard",
-        "from": "node-mediamtx-ingest",
-        "fromAnchor": "right",
-        "id": "edge-mediamtx-to-kafka",
-        "label": "event / metadata",
-        "to": "node-kafka-stream",
-        "toAnchor": "left"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-kafka-stream",
-        "fromAnchor": "top",
-        "id": "edge-kafka-to-timeseries",
-        "label": "metrics / telemetry",
-        "to": "node-timeseries-db",
-        "toAnchor": "right"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-lb-public",
-        "fromAnchor": "bottom",
-        "id": "edge-public-lb-to-kong",
-        "label": "HTTPS",
-        "to": "node-kong-gateway",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-kong-gateway",
-        "fromAnchor": "right",
-        "id": "edge-1764688704446",
-        "label": "",
-        "to": "node-1764688677775",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-lb-public",
-        "fromAnchor": "bottom",
-        "id": "edge-1764689238787",
-        "label": "",
-        "to": "node-mqtt-broker",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-1764688677775",
-        "fromAnchor": "bottom",
-        "id": "edge-1764689302790",
-        "label": "",
-        "to": "node-1764689291988",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-1764689291988",
-        "fromAnchor": "right",
-        "id": "edge-1764689330475",
-        "label": "",
-        "to": "node-kafka-stream",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-kafka-stream",
-        "fromAnchor": "bottom",
-        "id": "edge-1764689512162",
-        "label": "",
-        "to": "node-1764688832546",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
         "from": "node-1764688832546",
         "fromAnchor": "right",
         "id": "edge-1764689517943",
         "label": "",
         "to": "node-1764689495709",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-mqtt-broker",
-        "fromAnchor": "bottom",
-        "id": "edge-1764689634142",
-        "label": "",
-        "to": "node-1764688677775",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-1764688677775",
-        "fromAnchor": "right",
-        "id": "edge-1764689670893",
-        "label": "",
-        "to": "node-1764688373446",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-1764688373446",
-        "fromAnchor": "right",
-        "id": "edge-1764689726201",
-        "label": "",
-        "to": "node-kafka-stream",
         "toAnchor": "top"
       },
       {
@@ -146,60 +47,6 @@
         "id": "edge-1764690400489",
         "label": "",
         "to": "node-1764690375126",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-1764690375126",
-        "fromAnchor": "bottom",
-        "id": "edge-1764690407267",
-        "label": "",
-        "to": "node-object-storage",
-        "toAnchor": "right"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-kafka-stream",
-        "fromAnchor": "bottom",
-        "id": "edge-1764690683832",
-        "label": "",
-        "to": "node-telemetry-service",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-telemetry-service",
-        "fromAnchor": "right",
-        "id": "edge-1764690688116",
-        "label": "",
-        "to": "node-1764690592367",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-kafka-stream",
-        "fromAnchor": "bottom",
-        "id": "edge-1764690720206",
-        "label": "",
-        "to": "node-user-portal",
-        "toAnchor": "top"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-user-portal",
-        "fromAnchor": "bottom",
-        "id": "edge-1764690734068",
-        "label": "",
-        "to": "node-auth-service",
-        "toAnchor": "right"
-      },
-      {
-        "arrowType": "standard",
-        "from": "node-1764688677775",
-        "fromAnchor": "bottom",
-        "id": "edge-1764690753926",
-        "label": "",
-        "to": "node-auth-service",
         "toAnchor": "top"
       },
       {
@@ -231,12 +78,129 @@
       },
       {
         "arrowType": "standard",
-        "from": "node-1764690895378",
-        "fromAnchor": "right",
-        "id": "edge-1764690917057",
+        "from": "group-group-kong",
+        "fromAnchor": "bottom",
+        "id": "edge-1764982557421",
         "label": "",
-        "to": "group-group-db",
+        "to": "node-1764688677775",
         "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-lb-public",
+        "fromAnchor": "bottom",
+        "id": "edge-1764982565615",
+        "label": "",
+        "to": "group-group-kong",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764982940755",
+        "fromAnchor": "bottom",
+        "id": "edge-1764982958725",
+        "label": "RTPS",
+        "to": "node-1764688373446",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764983041483",
+        "fromAnchor": "bottom",
+        "id": "edge-1764983054123",
+        "label": "",
+        "to": "node-lb-public",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764688677775",
+        "fromAnchor": "right",
+        "id": "edge-1764983689750",
+        "label": "",
+        "to": "node-1764689291988",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764689291988",
+        "fromAnchor": "right",
+        "id": "edge-1764983705761",
+        "label": "",
+        "to": "group-group-kafka",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-telemetry-service",
+        "fromAnchor": "right",
+        "id": "edge-1764984438823",
+        "label": "",
+        "to": "node-1764690592367",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764690375126",
+        "fromAnchor": "bottom",
+        "id": "edge-1764984835373",
+        "label": "",
+        "to": "node-object-storage",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764688373446",
+        "fromAnchor": "right",
+        "id": "edge-1764984845088",
+        "label": "",
+        "to": "node-object-storage",
+        "toAnchor": "left"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-1764688373446",
+        "fromAnchor": "bottom",
+        "id": "edge-1764985795400",
+        "label": "",
+        "to": "group-group-1764688302891-e4cp2ua18",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "group-group-1764688302891-e4cp2ua18",
+        "fromAnchor": "bottom",
+        "id": "edge-1764985804684",
+        "label": "",
+        "to": "node-1764689291988",
+        "toAnchor": "top"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-mediamtx-ingest",
+        "fromAnchor": "bottom",
+        "id": "edge-1764985902192",
+        "label": "",
+        "to": "group-group-1764688302891-e4cp2ua18",
+        "toAnchor": "right"
+      },
+      {
+        "arrowType": "standard",
+        "from": "group-group-kafka",
+        "fromAnchor": "bottom",
+        "id": "edge-1764986093489",
+        "label": "",
+        "to": "node-auth-service",
+        "toAnchor": "right"
+      },
+      {
+        "arrowType": "standard",
+        "from": "node-auth-service",
+        "fromAnchor": "left",
+        "id": "edge-1764986097633",
+        "label": "",
+        "to": "node-user-portal",
+        "toAnchor": "right"
       }
     ],
     "groups": [
@@ -283,9 +247,9 @@
           "ram": "256 GB"
         },
         "type": "cluster",
-        "width": 780,
-        "x": -440,
-        "y": 440
+        "width": 1280,
+        "x": -280,
+        "y": 880
       },
       {
         "color": "#3b82f6",
@@ -326,9 +290,9 @@
           "ram": "192 GB"
         },
         "type": "cluster",
-        "width": 660,
-        "x": 280,
-        "y": 60
+        "width": 520,
+        "x": 820,
+        "y": 40
       },
       {
         "color": "#3b82f6",
@@ -369,8 +333,8 @@
         },
         "type": "cluster",
         "width": 360,
-        "x": 540,
-        "y": 520
+        "x": 1140,
+        "y": 900
       },
       {
         "color": "#3b82f6",
@@ -412,12 +376,12 @@
         },
         "type": "cluster",
         "width": 400,
-        "x": 1040,
-        "y": 860
+        "x": 1680,
+        "y": 1180
       },
       {
         "color": "#3b82f6",
-        "height": 220,
+        "height": 200,
         "icon": "https://cdn.cookielaw.org/logos/42b8010a-a819-451e-8bd4-35f56794de29/2c4de954-6bec-4e93-8086-64cb113f151a/69e1ef61-0885-4db9-ac57-70d056bc66b3/konglogo.png",
         "iconType": "url",
         "id": "group-kong",
@@ -443,9 +407,9 @@
           "ram": "64 GB"
         },
         "type": "cluster",
-        "width": 380,
-        "x": -460,
-        "y": 0
+        "width": 320,
+        "x": -280,
+        "y": 140
       },
       {
         "color": "#3b82f6",
@@ -476,8 +440,8 @@
         },
         "type": "cluster",
         "width": 260,
-        "x": 1120,
-        "y": 160
+        "x": 1500,
+        "y": -160
       },
       {
         "color": "#3b82f6",
@@ -505,9 +469,9 @@
           "ram": ""
         },
         "type": "cluster",
-        "width": 300,
-        "x": -60,
-        "y": 120
+        "width": 320,
+        "x": 360,
+        "y": 580
       },
       {
         "color": "#10b981",
@@ -536,8 +500,8 @@
         },
         "type": "cluster",
         "width": 300,
-        "x": 580,
-        "y": 840
+        "x": 1200,
+        "y": 1260
       }
     ],
     "nodeTypes": [
@@ -617,123 +581,137 @@
         "iconType": "url",
         "label": "InfluxDB",
         "value": "influx"
+      },
+      {
+        "color": "#dde4ee",
+        "icon": "https://i.fbcd.co/products/resized/resized-750-500/one007e-57-e01-mainpreview-19ad9f7cad28cb0599399420af63492a3782bcbf6e544c034a57b894b24fe426.jpg",
+        "iconType": "url",
+        "label": "camera",
+        "value": "camera"
+      },
+      {
+        "color": "#e6eaef",
+        "icon": "https://cdn-icons-png.flaticon.com/512/13350/13350690.png",
+        "iconType": "url",
+        "label": "Application",
+        "value": "app"
       }
     ],
     "nodes": [
       {
-        "dragOffsetX": 102.57936507936483,
-        "dragOffsetY": 67.88888888888889,
+        "dragOffsetX": 91.16666666666664,
+        "dragOffsetY": 57.58333333333337,
         "id": "node-cameras-1000",
         "label": "Camera FHD x1000",
-        "type": "service",
-        "x": 300,
-        "y": -140
+        "type": "camera",
+        "x": 920,
+        "y": -220
       },
       {
-        "dragOffsetX": 69.91269841269803,
-        "dragOffsetY": 43.88888888888869,
+        "dragOffsetX": 68.53174603174608,
+        "dragOffsetY": 57.82142857142868,
         "id": "node-lb-ingest",
         "label": "LB Media",
         "type": "lb",
-        "x": 300,
-        "y": -40
+        "x": 920,
+        "y": -80
       },
       {
-        "dragOffsetX": 85.91269841269806,
-        "dragOffsetY": 59.8888888888887,
+        "dragOffsetX": 74.50000000000011,
+        "dragOffsetY": 59.250000000000014,
         "id": "node-lb-public",
         "label": "HTTP/WS/MQTT",
         "type": "lb",
-        "x": 60,
-        "y": -120
+        "x": -200,
+        "y": -20
       },
       {
-        "dragOffsetX": 107.72222222222264,
-        "dragOffsetY": 58.29365079365073,
+        "dragOffsetX": 74.24603174603185,
+        "dragOffsetY": 44.96428571428578,
         "groupId": "group-kong",
         "id": "node-kong-gateway",
         "label": "Kong API Gateway",
         "type": "gateway",
-        "x": -360,
-        "y": 100
+        "x": -200,
+        "y": 240
       },
       {
-        "dragOffsetX": 107.91269841269816,
-        "dragOffsetY": 39.88888888888846,
+        "dragOffsetX": 69.5,
+        "dragOffsetY": 55.916666666666515,
         "groupId": "group-k8s-core",
         "id": "node-auth-service",
         "label": "Command",
         "type": "service",
-        "x": -400,
-        "y": 660
+        "x": 720,
+        "y": 1120
       },
       {
-        "dragOffsetX": 75.91269841269815,
-        "dragOffsetY": 34.55555555555543,
+        "dragOffsetX": 99.5,
+        "dragOffsetY": 74.24999999999977,
         "groupId": "group-db",
         "id": "node-device-registry",
         "label": "Device Registry",
         "type": "db",
-        "x": 1080,
-        "y": 960
+        "x": 1690,
+        "y": 1300
       },
       {
-        "dragOffsetX": 87.91269841269806,
-        "dragOffsetY": 47.88888888888863,
+        "dragOffsetX": 75.67460317460325,
+        "dragOffsetY": 33.53571428571439,
         "groupId": "group-1764688302891-e4cp2ua18",
         "id": "node-mqtt-broker",
         "label": "MQTT Broker",
         "type": "MQTT",
-        "x": 40,
-        "y": 200
+        "x": 460,
+        "y": 680
       },
       {
-        "dragOffsetX": 79.91269841269803,
-        "dragOffsetY": 27.88888888888846,
+        "dragOffsetX": 71.16666666666677,
+        "dragOffsetY": 44.24999999999977,
         "id": "node-telemetry-service",
         "label": "Telemetry Service",
         "type": "Telemetry",
         "x": -200,
-        "y": 920
+        "y": 1320
       },
       {
-        "dragOffsetX": 79.9126984126981,
-        "dragOffsetY": 39.88888888888846,
+        "dragOffsetX": 72.83333333333326,
+        "dragOffsetY": 47.58333333333303,
         "groupId": "group-k8s-core",
         "id": "node-user-portal",
         "label": "RuleEngine",
         "type": "service",
-        "x": -400,
-        "y": 780
+        "x": 440,
+        "y": 1120
       },
       {
-        "dragOffsetX": 85.91269841269798,
-        "dragOffsetY": 35.88888888888863,
+        "dragOffsetX": 106.16666666666652,
+        "dragOffsetY": 37.583333333333314,
         "groupId": "group-gpu",
         "id": "node-mediamtx-ingest",
         "label": "MediaMTX Ingest",
         "type": "service",
-        "x": 320,
+        "x": 920,
         "y": 160
       },
       {
-        "dragOffsetX": 69.91269841269798,
-        "dragOffsetY": 35.88888888888857,
+        "dragOffsetX": 102.83333333333326,
+        "dragOffsetY": 49.24999999999977,
         "groupId": "group-kafka",
         "id": "node-kafka-stream",
         "label": "Kafka Stream",
         "type": "queue",
-        "x": 640,
-        "y": 680
+        "x": 1240,
+        "y": 1040
       },
       {
-        "dragOffsetX": 47.912698412697864,
-        "dragOffsetY": 43.88888888888857,
+        "dragOffsetX": 77.83333333333326,
+        "dragOffsetY": 57.58333333333326,
         "id": "node-object-storage",
         "label": "Object Storage (Recording)",
         "type": "storage",
-        "x": 980,
-        "y": 480
+        "x": 1160,
+        "y": 420
       },
       {
         "dragOffsetX": 85.91269841269809,
@@ -742,8 +720,8 @@
         "id": "node-timeseries-db",
         "label": "Timeseries DB",
         "type": "db",
-        "x": 1260,
-        "y": 980
+        "x": 1900,
+        "y": 1300
       },
       {
         "dragOffsetX": 54.24603174603135,
@@ -752,97 +730,117 @@
         "id": "node-monitoring",
         "label": "Monitoring / Logging",
         "type": "service",
-        "x": 1180,
-        "y": 260
+        "x": 1560,
+        "y": -60
       },
       {
-        "dragOffsetX": 73.91269841269803,
-        "dragOffsetY": 35.88888888888857,
-        "groupId": "group-k8s-core",
+        "dragOffsetX": 82.83333333333337,
+        "dragOffsetY": 60.91666666666663,
         "id": "node-1764688373446",
         "label": "OEM Adapter Cluster",
         "type": "service",
-        "x": 140,
-        "y": 660
+        "x": 440,
+        "y": 420
       },
       {
-        "dragOffsetX": 80.57936507936462,
-        "dragOffsetY": 48.555555555555316,
+        "dragOffsetX": 76.16666666666676,
+        "dragOffsetY": 47.58333333333303,
         "groupId": "group-k8s-core",
         "id": "node-1764688677775",
         "label": "Ingress",
         "type": "lb",
         "x": -200,
-        "y": 540
+        "y": 1000
       },
       {
-        "dragOffsetX": 83.91269841269803,
-        "dragOffsetY": 51.88888888888846,
+        "dragOffsetX": 61.16666666666663,
+        "dragOffsetY": 39.24999999999977,
         "id": "node-1764688832546",
         "label": "Shadow",
         "type": "service",
-        "x": 140,
-        "y": 780
+        "x": 500,
+        "y": 1340
       },
       {
-        "dragOffsetX": 81.91269841269812,
-        "dragOffsetY": 37.88888888888857,
+        "dragOffsetX": 81.16666666666663,
+        "dragOffsetY": 54.24999999999977,
+        "groupId": "group-k8s-core",
         "id": "node-1764689291988",
         "label": "IoT Transport Hub",
         "type": "service",
-        "x": -200,
-        "y": 660
+        "x": 440,
+        "y": 1000
       },
       {
-        "dragOffsetX": 89.91269841269798,
-        "dragOffsetY": 57.88888888888846,
+        "dragOffsetX": 102.83333333333326,
+        "dragOffsetY": 40.91666666666629,
         "groupId": "group-1764689456801-fjenblabn",
         "id": "node-1764689495709",
         "label": "MongoDB",
         "type": "MongoDB",
-        "x": 640,
-        "y": 940
+        "x": 1210,
+        "y": 1380
       },
       {
-        "dragOffsetX": 81.91269841269798,
-        "dragOffsetY": 59.88888888888863,
+        "dragOffsetX": 58.531746031746025,
+        "dragOffsetY": 34.96428571428578,
+        "groupId": "group-gpu",
         "id": "node-1764690173886",
         "label": "FFmpeg",
         "type": "service",
-        "x": 660,
+        "x": 1160,
         "y": 160
       },
       {
-        "dragOffsetX": 83.91269841269798,
-        "dragOffsetY": 43.88888888888863,
+        "dragOffsetX": 91.16666666666652,
+        "dragOffsetY": 52.583333333333314,
+        "groupId": "group-gpu",
         "id": "node-1764690375126",
         "label": "HLS",
         "type": "service",
-        "x": 660,
+        "x": 1160,
         "y": 300
       },
       {
-        "dragOffsetX": 61.91269841269806,
-        "dragOffsetY": 35.88888888888846,
+        "dragOffsetX": 69.50000000000006,
+        "dragOffsetY": 57.583333333333144,
         "id": "node-1764690592367",
         "label": "InfluxDB",
         "type": "influx",
-        "x": 140,
-        "y": 920
+        "x": 40,
+        "y": 1320
       },
       {
-        "dragOffsetX": 90.5793650793646,
-        "dragOffsetY": 40.222222222221944,
+        "dragOffsetX": 86.16666666666669,
+        "dragOffsetY": 65.91666666666652,
         "groupId": "group-k8s-core",
         "id": "node-1764690895378",
         "label": "Registry",
         "type": "service",
-        "x": -80,
-        "y": 780
+        "x": 240,
+        "y": 1100
+      },
+      {
+        "dragOffsetX": 67.83333333333331,
+        "dragOffsetY": 39.25000000000006,
+        "id": "node-1764982940755",
+        "label": "OEM Camera",
+        "type": "camera",
+        "x": 440,
+        "y": -220
+      },
+      {
+        "dragOffsetX": 94.50000000000009,
+        "dragOffsetY": 50.916666666666714,
+        "id": "node-1764983041483",
+        "label": "Application",
+        "type": "app",
+        "x": -200,
+        "y": -220
       }
     ],
     "vms": []
   },
   "createdAt": "2025-12-02T15:04:27.767Z",
-  "updatedAt": "2025-12-02T15:55:36.506Z"
+  "updatedAt": "2025-12-06T01:56:42.077Z"
 }

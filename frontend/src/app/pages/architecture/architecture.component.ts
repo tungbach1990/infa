@@ -268,6 +268,34 @@ export class ArchitectureComponent implements OnInit {
     this.editTypeDropdownOpen = false;
   }
 
+  // Auto-save on node/edge changes
+  private saveTimeout: any = null;
+  
+  onNodeChange() {
+    this.debouncedSave();
+  }
+
+  onEdgeChange() {
+    // Update the original edge in edges array
+    if (this.selectedEdge) {
+      const originalEdge = this.edges.find(e => e.id === this.selectedEdge!.id);
+      if (originalEdge) {
+        originalEdge.label = this.selectedEdge.label;
+        originalEdge.arrowType = this.selectedEdge.arrowType;
+      }
+    }
+    this.debouncedSave();
+  }
+
+  private debouncedSave() {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+    this.saveTimeout = setTimeout(() => {
+      this.saveCurrentDashboard();
+    }, 500);
+  }
+
   // Theme Methods
   toggleThemeMenu() {
     this.showThemeMenu = !this.showThemeMenu;
